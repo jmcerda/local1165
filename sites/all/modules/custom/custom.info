@@ -1,0 +1,6 @@
+name = Custom
+description = Custom site custom functions
+core = 7.x
+
+files[] = custom.module
+

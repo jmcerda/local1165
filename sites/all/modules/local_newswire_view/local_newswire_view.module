@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Local newswire view feature.
+ */
+
+include_once 'local_newswire_view.features.inc';

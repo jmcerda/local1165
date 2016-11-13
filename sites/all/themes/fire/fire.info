@@ -1,0 +1,21 @@
+name = FireFighters Theme
+description = A flexible one-column theme with a few regions.
+core = 7.x
+
+;stylesheets[all][] = vendor/font-awesome/css/font-awesome.min.css;
+stylesheets[all][] = vendor/swiper/dist/css/swiper.css;
+stylesheets[all][] = src/less/all.less
+
+scripts[] = vendor/swiper/dist/js/swiper.js
+scripts[] = vendor/scrollto/jquery-scrollto.js
+scripts[] = src/js/common.js
+
+regions[header] = Header
+regions[searchbar] = Search bar
+regions[content] = Content
+regions[content_center] = Content Center
+regions[content_lower] = Content Lower
+regions[left_sidebar] = Left Sidebar
+regions[right_sidebar] = Right Sidebar
+regions[footer] = Footer
+

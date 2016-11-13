@@ -1,0 +1,585 @@
+:root {
+  font-size: 19px;
+
+}
+
+body {
+  font-family: "OpenSans", sans-serif;
+  color: @base;
+  margin: 0;
+  line-height: 1.5;
+  overflow-x: hidden;
+  min-width: 320px;
+  padding-top: 15px;
+}
+
+:focus {
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+#block-system-main a {
+  text-decoration: underline;
+  color: #961b1e;
+  span {
+    text-decoration: underline;
+  }
+}
+
+/*img {
+  width: 100%;
+  height: auto;
+}*/
+
+h2,
+h4 {
+  font-family: "OpenSansBold", sans-serif;
+  color: @red;
+  font-size: 18px;
+  margin: 24px 0;
+}
+
+ul li.leaf {
+  list-style: none;
+}
+.menu,
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.view img {
+  display: block;
+}
+#page-title {
+  text-align: left;
+  color: #961b1e;
+  font-family: "OpenSansBold", sans-serif;
+  font-weight: bold;
+}
+.node-type-page .paragraphs-items-field-page-slider + .page-content #page-title {
+  display: none;
+}
+.paragraphs-items-field-page-slider {
+    max-height: 500px;
+    overflow: hidden;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+.page-node-1 .paragraphs-items-field-page-slider {
+    max-width: 100%;
+}
+.paragraphs-items-field-page-slider img {
+    margin-left: 0!important;
+    width: 100%;
+    height: auto;
+} 
+
+@media screen and (max-width: 769px) {
+  .paragraphs-items-field-page-slider img {
+    //margin-left: -50%!important;
+} 
+}
+
+.flex-row {
+  display: flex;
+}
+
+#content {
+  z-index: 1;
+}
+
+.field-name-field-text-title {
+  padding: 20px 0;
+  text-align: center;
+  color: @red;
+  font: 31px "OpenSansBold";
+
+}
+.front .paragraphs-items-field-text-block {
+  background: url('../img/about-us-back3.png') -17px 15px;
+  background-size: cover;
+  padding: 334px 15px 76px;
+  background-size: 103%;
+  background-repeat: no-repeat;
+}
+.paragraphs-items-field-text-block {
+  padding: 40px 0 76px;
+
+  .field-name-field-text-block {
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+    top: -70px;
+  }
+}
+.front .field-name-field-text-text .field-item {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
+  -webkit-column-gap: 100px;
+  -moz-column-gap: 100px;
+  column-gap: 100px;
+}
+
+
+.fa {
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  background: @red;
+  padding: 10px;
+  border-radius: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  margin-right: 14px;
+  line-height: 20px;
+}
+
+.page-content {
+  .page-content-inner {
+    display: flex;
+    & > div {
+      flex-grow: 1;
+    }
+    #right-sidebar {
+      flex-basis: 350px;
+      margin-left: 35px;
+      flex-grow: 0;
+    }
+    #left-sidebar {
+      flex-basis: 350px;
+      margin-right: 35px;
+      flex-grow: 0;
+    }
+  }
+
+}
+
+.not-front {
+  .block-menu li,
+  .block-menu {
+    text-align: right;
+  }
+}
+.not-front .paragraphs-items-field-page-slider + .page-content {
+  padding-top: 11.98%;
+}
+.not-front .page-content .page-content-inner {
+  max-width: 1390px;
+  margin: 75px auto 0;
+
+  .paragraphs-items-field-text-block,
+  .field-name-field-text-title {
+    padding-top: 0;
+
+  }
+  .field-name-field-text-title {
+    text-align: left;
+  }
+
+}
+
+.field-name-field-left-side-image {
+  max-width: 505px;
+}
+
+.node-type-page .paragraphs-items-field-page-slider + .page-content {
+  position: relative;
+  z-index: 0;
+  margin-top: -226px;
+}
+
+
+#block-views-local-newswire-block {
+  clear: both;
+  background: url('../img/newswire.jpg') center center no-repeat;
+  background-size: cover;
+
+  & > .content {
+    margin-left: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 28px 109px 250px;
+  }
+
+  h2 {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 32px;
+    margin-left: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 28px 109px 0 109px;
+    margin-bottom: 0;
+  }
+
+  .views-row {
+    display: flex;
+    background: #fff;
+    max-width: 580px;
+    border: 1px solid #646059;
+
+    .views-field-nothing-1 {
+      .field-content {
+        display: block;
+        height: 100%;
+
+        .date {
+          height: 100%;
+          box-sizing: border-box;
+          width: 100px;
+        }
+      }
+    }
+  }
+
+  .views-row + .views-row {
+    margin-top: 22px;
+  }
+  .date {
+    background: #961b1e;
+    padding: 22px 30px;
+    color: #fff;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .subtitle {
+    color: #535151;
+  }
+  .title {
+    font-family: "OpenSansSemiBold", sans-serif;
+  }
+  .info-wrp {
+    padding: 18px 50px;
+    font-size: 20px;
+  }
+  .day {
+    font-family: "OpenSansBold", sans-serif;
+    font-size: 50px;
+  }
+  .month {
+    font-size: 22px;
+  }
+}
+
+.region-content-center {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 5%;
+
+  & .block {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .block-aggregator li,
+  .view-in-the-news .views-row {
+    list-style: none;
+    margin: 0 0 40px 0;
+    font-family: "OpenSansSemiBold", sans-serif;
+  }
+  #block-views-event-calendar-block-1,
+  #block-views-shifts-calendar-block-1 {
+    padding: 100px 15px 100px 150px;
+    width: 100%;
+    max-width: 300px;
+  }
+  #block-views-shifts-calendar-block-1 {
+    padding-top: 0;
+  }
+  h2 {
+    font-size: 31px;
+    margin-top: 60px;
+  }
+  .more-link {
+    display: none;
+  }
+  .view-event-calendar .view-content tr td {
+    padding: 8px 0;
+  }
+}
+
+.not-front .page-content .page-content-inner {
+  padding: 0 40px 0;
+}
+
+.not-front .field-name-field-slide-image::after {
+  content: none;
+}
+
+#block-menu-menu-quick-links h2 {
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.field-name-field-text-text,
+.block .content p {
+  font-size: 16px;
+}
+
+.not-front .paragraphs-items-field-text-block .field-name-field-text-block {
+  top: 0;
+}
+
+.not-front.node-type-page .paragraphs-items-field-page-slider + .page-content {
+  background: url("../img/slider-back-yellow-line.png") center top no-repeat;
+  background-size: 100%;
+  max-width: 1500px;
+  margin: -13% auto 0 auto;
+}
+
+
+form {
+  margin: 0 auto 80px;
+  max-width: 400px;
+
+  textarea,
+  input {
+    padding: 10px 15px;
+    border: 1px solid #CCC;
+    border-radius: 10px;
+  }
+
+  input[type="submit"] {
+    background: #961b1e;
+    color: #FFF;
+    border-radius: 10px;
+    padding: 16px 30px;
+    display: inline-block;
+    font: 16px "UbuntuBold", sans;
+    border: none;
+    transition: background-color .3s ease-in-out;
+
+    &:hover {
+      background: #992c12;
+      cursor: pointer;
+    }
+  }
+  .form-item .description {
+    color: #929292;
+  }
+
+  .form-actions {
+    text-align: center;
+  }
+
+}
+.tabs-wrapper {
+  margin-top: 60px;
+}
+
+.front.node-type-page .paragraphs-items-field-page-slider + .page-content {
+  margin-top: -255px;
+}
+
+.field-name-field-left-side-image img {
+  width: 100%;
+  height: auto;
+}
+
+.region-content-center #block-block-1 {
+  padding-left: 15px;
+}
+
+.field-name-field-text-text p {
+  margin: 0;
+}
+
+#block-system-main img {
+  margin: 0px 20px 5px 0px;
+}
+
+.view-photo-galleries {
+  .view-content {
+    .views-row {
+      display: inline-block;
+      padding: 10px;
+      margin: 0 0 2.5% 2.5%;
+      background: #fff;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      font-size: 1rem;
+      vertical-align: top;
+      box-shadow: 0 0 5px #ddd;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      width: 30%;
+      text-align: center;
+      img {
+        max-width: 100%;
+        height: auto;
+        margin: 0 0 10px !important;
+      }
+      .views-field-title {
+        text-align: center;
+      }
+      @media (max-width: 600px) {
+        width: 100% !important; /* over-ride all li styles */
+        margin: 0 0 20px;
+      }
+    }
+  }
+}
+
+.field-name-field-photo-gallery-images,
+.field-name-field-people,
+.view-people {
+  & > .field-items,
+  .views-view-grid {
+    & > .field-item,
+    & > tbody > tr > td {
+      display: inline-block;
+      padding: 10px;
+      margin: 0 0 2.5% 2.5%;
+      background: #fff;
+      font-size: 16px;
+      vertical-align: top;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      width: 30%;
+      text-align: center;
+      &.empty {
+        box-shadow: none;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto 10px !important;
+      }
+      .views-field-title {
+        text-align: center;
+      }
+      @media (max-width: 600px) {
+        width: 100% !important; /* over-ride all li styles */
+        margin: 0 0 20px;
+      }
+      .field-collection-view {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+      }
+    }
+  }
+}
+
+.field-name-field-people,
+.view-people {
+  .field-name-field-people-photo {
+    img {
+      border-radius: 100%;
+    }
+  }
+  .field-name-field-people-name {
+    margin-bottom: 10px;
+    color: #961b1e;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .field-name-field-people-description {
+    p {
+      display: inline;
+    }
+  }
+}
+
+.node-people-list {
+  .field-collection-container {
+    border: 0 none;
+  }
+}
+
+.node-page {
+  .field-name-field-page-block {
+    & > .field-items {
+      & > .field-item {
+        .block > h2 {
+          text-align: center;
+          font-size: 1.3em;
+        }
+        width: 45%;
+        float: left;
+        &:first-child {
+          margin-right: 8%;
+        }
+        @media (max-width: 770px) {
+          width: 100%;
+          margin-right: 0;
+        }
+        .node {
+          border-bottom: 1px solid #CCC;
+          padding-bottom: 20px;
+          .field-name-body {
+            img {
+              width: 100%;
+              height: auto;
+            }
+          }
+          .links {
+            li {
+              &:first-child {
+                padding-left: 0;
+              }
+              a {
+                font-size: 0.7em;
+              }
+            }
+          }
+        }
+        .views-row:last-child {
+          .node {
+            border: 0 none;
+          }
+        }
+      }
+    }
+  }
+}
+
+#alpha-people-filter {
+  list-style: none;
+  padding-left: 0;
+  li {
+    display: inline-block;
+    margin-right: 5px;
+  }
+}
+
+.view-people {
+  .views-field-field-people-photo {
+    float: left;
+  }
+  td {
+    width: 33%;
+  }
+  table {
+    width: 100%;
+  }
+}
+
+.node-news-feed {
+  .links {
+    li {
+      &:first-child {
+        padding-left: 0;
+      }
+      a {
+        font-size: 0.7em;
+      }
+    }
+  }
+}
+.view-rss-news-feed {
+  .views-row {
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 20px;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

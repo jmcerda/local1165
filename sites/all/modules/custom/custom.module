@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ *
+ * @return array
+ */
+function custom_menu() {
+
+  $items = array();
+
+  $items['admin/config/theme-custom-settings'] = array(
+    'title' => 'Theme Custom Settings',
+    'description' => 'Here you can adjust custom texts',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('custom_custom_admin'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Module admin form
+ *
+ * @return mixed
+ */
+function custom_custom_admin() {
+  $form = array();
+
+  $form['custom_admin_phone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site Contact Phone'),
+    '#default_value' => variable_get('custom_admin_phone'),
+    '#size' => 24,
+    '#description' => t("Site Contact Phone number."),
+    '#required' => TRUE,
+  );
+
+  $form['custom_admin_email'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Site Contact Email'),
+      '#default_value' => variable_get('custom_admin_email'),
+      '#size' => 24,
+      '#description' => t("Site Contact email."),
+      '#required' => TRUE,
+  );
+
+  // Socials
+  $form['custom_admin_facebook'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Facebook link'),
+      '#default_value' => variable_get('custom_admin_facebook'),
+      '#size' => 24,
+      '#description' => t("Including http(s)"),
+      '#required' => TRUE,
+  );
+  $form['custom_admin_twitter'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Twitter link'),
+      '#default_value' => variable_get('custom_admin_twitter'),
+      '#size' => 24,
+      '#description' => t("Including http(s)"),
+      '#required' => TRUE,
+  );
+  $form['custom_admin_linkedin'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Linkedin link'),
+      '#default_value' => variable_get('custom_admin_linkedin'),
+      '#size' => 24,
+      '#description' => t("Including http(s)"),
+      '#required' => TRUE,
+  );
+  $form['custom_admin_instagram'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Instagram link'),
+      '#default_value' => variable_get('custom_admin_instagram'),
+      '#size' => 24,
+      '#description' => t("Including http(s)"),
+      '#required' => TRUE,
+  );
+
+
+  $form['custom_admin_address'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Company Address'),
+      '#default_value' => variable_get('custom_admin_address'),
+      //'#size' => 24,
+      '#description' => t("Company Address"),
+      '#required' => TRUE,
+  );
+
+
+  return system_settings_form($form);
+}
+
+
+function custom_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'webform_client_form_471') {
+    if (arg(0) == 'node' && intval(arg(1))) {
+      $form['submitted']['event']['#default_value'][0] = arg(1);
+      $form['submitted']['event']['#access'] = FALSE;
+    }
+  }
+
+}
+
+/*
+ * Implements hook_feeds_after_parse().
+ */
+function custom_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
+  foreach ($result->items as &$item) {
+    $item['description'] = preg_replace('#<a.*?class=".*?entry-title.*?">(.*?)</a>#', '', $item['description']);
+  }
+}

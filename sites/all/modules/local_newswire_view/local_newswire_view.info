@@ -1,0 +1,13 @@
+name = Local newswire view
+core = 7.x
+package = Features
+version = 7.x-1.0
+dependencies[] = strongarm
+dependencies[] = views
+features[ctools][] = strongarm:strongarm:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[variable][] = date_format_day
+features[variable][] = date_format_month
+features[views_view][] = local_newswire
+features_exclude[dependencies][ctools] = ctools

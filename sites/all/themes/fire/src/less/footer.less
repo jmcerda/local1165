@@ -1,0 +1,48 @@
+#footer {
+  background: url('../img/footer-back.png') center top no-repeat;
+  background-size: cover;
+  color: #fff;
+  font-size: 18px;
+  z-index: 1;
+  position: relative;
+  padding: 70px 15px 0;
+
+  .footer-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 18px 0 35px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+
+    /*& > div {
+      flex-basis: 25%;
+    }*/
+  }
+
+  a {
+    color: #fff;
+  }
+
+  .fa {
+    background: #fff;
+    color: @red;
+  }
+
+  h2, h4 {
+    color: @yellow;
+  }
+}
+
+#under-footer {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 20px 15px;
+  font-size: 14px;
+}
+
+.front #footer {
+  margin-top: -195px;
+}
