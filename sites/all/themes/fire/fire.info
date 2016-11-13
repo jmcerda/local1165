@@ -3,8 +3,7 @@ description = A flexible one-column theme with a few regions.
 core = 7.x
 
 stylesheets[all][] = src/js/libs/swiper/css/swiper.min.css;
-stylesheets[all][] = css/all.css
-;stylesheets[all][] = css/styles.css
+stylesheets[all][] = css/styles.css
 
 scripts[] = js/jquery.plugins.min.js
 scripts[] = js/scripts.min.js
