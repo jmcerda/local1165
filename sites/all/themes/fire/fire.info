@@ -8,6 +8,7 @@ stylesheets[all][] = css/all.css
 
 scripts[] = js/jquery.plugins.min.js
 scripts[] = js/scripts.min.js
+scripts[] = js/custom.js
 
 regions[header] = Header
 regions[searchbar] = Search bar
