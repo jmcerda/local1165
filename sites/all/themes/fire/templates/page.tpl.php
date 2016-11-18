@@ -130,7 +130,7 @@ global $user;
         <?php print render($page['left_sidebar']); ?>
       </div>
     <?php endif; ?>
-    <div id="content" class="column">
+    <div id="content" class="column col-sm-10 col-xs-12">
       <div class="section">
         <?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
         <?php print render($page['content']); ?>
@@ -139,7 +139,7 @@ global $user;
       </div>
     </div>
     <?php if ($page['right_sidebar']) : ?>
-      <div id="right-sidebar">
+      <div id="right-sidebar col-sm-2 col-xs-12">
         <?php print render($page['right_sidebar']); ?>
       </div>
     <?php endif; ?>
