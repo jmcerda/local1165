@@ -4,7 +4,7 @@ core = 7.x
 
 stylesheets[all][] = src/fonts/font-awesome/css/font-awesome.min.css
 stylesheets[all][] = src/js/libs/swiper/css/swiper.min.css
-stylesheets[all][] = css/bootstrap.min.css
+stylesheets[all][] = css/bootstrap.css
 stylesheets[all][] = css/styles.css
 stylesheets[all][] = css/all.css
 
