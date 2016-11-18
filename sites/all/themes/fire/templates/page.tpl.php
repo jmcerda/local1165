@@ -125,12 +125,12 @@ global $user;
 <section class="page-content">
   <div class="page-content-inner">
     <?php if ($page['left_sidebar']) : ?>
-      <div id="left-sidebar">
+      <aside class="col-sm-3" id="left-sidebar">
         <?php if ($left_side_image) print render($left_side_image);?>
         <?php print render($page['left_sidebar']); ?>
-      </div>
+      </aside>
     <?php endif; ?>
-    <div id="content" class="column col-sm-10 col-xs-12">
+    <div id="content" class="column">
       <div class="section">
         <?php if ($title): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
         <?php print render($page['content']); ?>
@@ -139,9 +139,9 @@ global $user;
       </div>
     </div>
     <?php if ($page['right_sidebar']) : ?>
-      <div id="right-sidebar col-sm-2 col-xs-12">
+      <aside class="col-sm-3 id="right-sidebar">
         <?php print render($page['right_sidebar']); ?>
-      </div>
+      </aside>
     <?php endif; ?>
   </div>
 </section>
