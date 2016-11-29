@@ -125,7 +125,7 @@ global $user;
 <section class="page-content">
   <div class="page-content-inner">
     <?php if ($page['left_sidebar']) : ?>
-      <aside class="col-sm-3" id="left-sidebar">
+      <aside id="left-sidebar">
         <?php if ($left_side_image) print render($left_side_image);?>
         <?php print render($page['left_sidebar']); ?>
       </aside>
@@ -139,10 +139,11 @@ global $user;
       </div>
     </div>
     <?php if ($page['right_sidebar']) : ?>
-      <aside class="col-sm-3 id="right-sidebar">
+      <aside id="right-sidebar">
         <?php print render($page['right_sidebar']); ?>
       </aside>
     <?php endif; ?>
+
   </div>
 </section>
 

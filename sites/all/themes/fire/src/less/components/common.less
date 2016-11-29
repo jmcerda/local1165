@@ -73,7 +73,7 @@ ul li.leaf {
 .paragraphs-items-field-page-slider {
     max-height: 500px;
     overflow: hidden;
-    max-width: 1500px;
+    max-width: 100%;
     margin: 0 auto;
 }
 .page-node-1 .paragraphs-items-field-page-slider {
@@ -283,6 +283,9 @@ ul li.leaf {
     text-align: center;
     margin: 0 auto;
   }
+  .front_news_block{
+    text-align: left;
+  }
 
   .block-aggregator li,
   .view-in-the-news .views-row {
@@ -291,13 +294,15 @@ ul li.leaf {
     font-family: "OpenSansSemiBold", sans-serif;
   }
   #block-views-event-calendar-block-1,
-  #block-views-shifts-calendar-block-1 {
+  #block-views-shifts-calendar-block-1,
+  #block-views-calendar-block-1 {
     padding: 0 15px 0 50px !important;
     width: 100%;
     max-width: 300px;
     margin: auto !important;
   }
-  #block-views-shifts-calendar-block-1 {
+  #block-views-shifts-calendar-block-1,
+  #block-views-calendar-block-1 {
     padding-top: 0;
   }
   h2 {
@@ -337,7 +342,7 @@ ul li.leaf {
 .not-front.node-type-page .paragraphs-items-field-page-slider + .page-content {
   background: url("../src/img/slider-back-yellow-line.png") center top no-repeat;
   background-size: 100%;
-  max-width: 1500px;
+  // max-width: 1500px;
   margin: -13% auto 0 auto;
 }
 
@@ -663,6 +668,15 @@ form {
   //   border-color: #000;
   //   border-style: dashed;
   // }
+  .table > thead > tr > th,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > th,
+  .table > thead > tr > td,
+  .table > tbody > tr > td,
+  .table > tfoot > tr > td {
+    vertical-align: middle;
+    padding: 24px;
+  }
 }
 
 .disqus_comments_num {
@@ -670,10 +684,14 @@ form {
 }
 
 .front .view .date-nav-wrapper .date-heading h3 {
-    line-height: 30px;
-    font-size: 1.7em;
+    line-height: 50px;
+    font-size: 1.5em;
     font-weight: bold;
     word-wrap: break-word;
     width: 70%;
     margin: 0 auto;
+}
+
+.views-exposed-widgets .views-exposed-widget {
+  display: inline-block !important;
 }
