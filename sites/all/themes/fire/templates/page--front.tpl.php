@@ -77,6 +77,15 @@ global $user;
 
 <header id="page-header">
 
+  <?php if ($logo): ?>
+    <div class="logo-wrapper">
+      <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo">
+        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+      </a>
+      <a href="#" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a>
+    </div>
+  <?php endif; ?>
+
   <div class="navbar grow">
 
     <div class="top-contacts-wrapper flex-row">
@@ -104,15 +113,6 @@ global $user;
     </div>
 
   </div>
-
-  <?php if ($logo): ?>
-    <div class="logo-wrapper">
-      <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo">
-        <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
-      </a>
-      <a href="#" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a>
-    </div>
-  <?php endif; ?>
 </header>
 
 <?php print render($page['header']); ?>
