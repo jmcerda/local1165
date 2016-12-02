@@ -6,10 +6,10 @@ function fire_preprocess_page(&$variables) {
     $variables['site_phone'] = variable_get('custom_admin_phone', '000.000.000');
     $variables['site_email'] = variable_get('custom_admin_email', 'email not set');
 
-    $variables['facebook_url'] = variable_get('custom_admin_facebook', '//www.facebook.com/sccfirefighters/');
-    $variables['twitter_url'] = variable_get('custom_admin_twitter', '//twitter.com/sccfirefighters');
+    $variables['facebook_url'] = variable_get('custom_admin_facebook', 'link not set');
+    $variables['twitter_url'] = variable_get('custom_admin_twitter', 'link not set');
     $variables['linkedin_url'] = variable_get('custom_admin_linkedin', 'link not set');
-    $variables['instagram_url'] = variable_get('custom_admin_instagram', '//www.instagram.com/sccfirefighters/');
+    $variables['instagram_url'] = variable_get('custom_admin_instagram', 'link not set');
 
     $variables['address'] = nl2br(variable_get('custom_admin_address', 'address not set'));
 
