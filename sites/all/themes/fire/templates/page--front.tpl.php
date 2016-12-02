@@ -91,6 +91,7 @@ global $user;
     <div class="top-contacts-wrapper flex-row">
       <div class="top-contacts left-side flex-row">
         <?php if (isset($facebook_url)) : ?>
+          <!-- <a href="//www.facebook.com/sccfirefighters/" class="social topicons"><img src="/<?php print path_to_theme(); ?>/src/img/facebook.png" />Facebook</a> -->
           <a href="<?php print $facebook_url ?>" class="social topicons"><img src="/<?php print path_to_theme(); ?>/src/img/facebook.png" />Facebook</a>
         <?php endif; ?>
         <?php if (isset($twitter_url)) : ?>
