@@ -1,0 +1,178 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Returns an array of menu items to add the the management menu.
+ */
+function _management_links_items() {
+
+  // Content
+  $items[] = array(
+    'link_path' => 'node/add',
+    'link_title' => 'Add content',
+    'parent_path' => 'admin/content',
+    'weight' => 2,
+  );
+  if (module_exists('scald')) {
+    $items[] = array(
+      'link_path' => 'admin/content/atoms',
+      'link_title' => 'Atoms',
+      'parent_path' => 'admin/content',
+      'weight' => 1,
+    );
+    $items[] = array(
+      'link_path' => 'atom/add',
+      'link_title' => 'Create Atom',
+      'parent_path' => 'PREVIOUS',
+    );
+  }
+
+  // Structure
+  $items[] = array(
+    'link_path' => 'admin/structure/block/add-menu-block',
+    'link_title' => 'Add menu block',
+    'parent_path' => 'admin/structure/block',
+  );
+    $items[] = array(
+    'link_path' => 'admin/structure/block/add',
+    'link_title' => 'Add block',
+    'parent_path' => 'admin/structure/block',
+  );
+  $items[] = array(
+    'link_path' => 'admin/structure/types/add',
+    'link_title' => 'Add content type',
+    'parent_path' => 'admin/structure/types',
+  );
+
+  if (module_exists('features')) {
+    $items[] = array(
+      'link_path' => 'admin/structure/features/create',
+      'link_title' => 'Create feature',
+      'parent_path' => 'admin/structure/features',
+    );
+    $items[] = array(
+      'link_path' => 'admin/structure/features/settings',
+      'link_title' => 'Settings',
+      'parent_path' => 'admin/structure/features',
+    );
+  }
+  if (module_exists('views')) {
+    $items[] = array(
+      'link_path' => 'admin/structure/views/settings',
+      'link_title' => 'Settings',
+      'parent_path' => 'admin/structure/views',
+      'weight' => 1,
+    );
+    $items[] = array(
+      'link_path' => 'admin/structure/views/add',
+      'link_title' => 'Add new view',
+      'parent_path' => 'admin/structure/views',
+      'weight' => 2,
+    );
+  }
+
+  // Appearance
+  $items[] = array(
+    'link_path' => 'admin/appearance/update',
+    'link_title' => 'Update',
+    'parent_path' => 'admin/appearance',
+    'weight' => 1,
+  );
+  $items[] = array(
+    'link_path' => 'admin/appearance/settings',
+    'link_title' => 'Settings',
+    'parent_path' => 'admin/appearance',
+    'weight' => 2,
+  );
+
+  // People
+  $items[] = array(
+    'link_path' => 'admin/people/permissions',
+    'link_title' => 'Permissions',
+    'parent_path' => 'admin/people',
+    'weight' => 1,
+  );
+  $items[] = array(
+    'link_path' => 'admin/people/permissions/roles',
+    'link_title' => 'Roles',
+    'parent_path' => 'PREVIOUS',
+  );
+  $items[] = array(
+    'link_path' => 'admin/people/create',
+    'link_title' => 'Add user',
+    'parent_path' => 'admin/people',
+    'weight' => 2,
+  );
+
+  // Modules
+  $items[] = array(
+    'link_path' => 'admin/modules/update',
+    'link_title' => 'Update',
+    'parent_path' => 'admin/modules',
+    'weight' => 1,
+  );
+  $items[] = array(
+    'link_path' => 'admin/modules/uninstall',
+    'link_title' => 'Uninstall',
+    'parent_path' => 'admin/modules',
+    'weight' => 2,
+  );
+  $items[] = array(
+    'link_path' => 'admin/modules/install',
+    'link_title' => 'Install new module',
+    'parent_path' => 'admin/modules',
+    'weight' => 3,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_install.
+ */
+function management_links_install() {
+
+  // adapted from menu_link_load()
+  $links = db_select('menu_links', 'ml', array('fetch' => PDO::FETCH_ASSOC))
+    ->fields('ml')
+    ->condition('ml.menu_name', 'management')
+    ->execute()
+    ->fetchAll();
+  $link_search = array_column($links, 'link_path');
+
+  $items = _management_links_items();
+  $previous_mlid = NULL;
+  foreach($items AS $item) {
+    $item['customized'] = 1;
+    $item['menu_name'] = 'management';
+    $item['plid'] = NULL;
+    if($item['parent_path'] == 'PREVIOUS') {
+      $item['plid'] = $previous_mlid;
+    } else {
+      // Find the mlid for the parent's path.
+      $key = array_search($item['parent_path'], $link_search);
+      if($key) {
+        // Use the parent's mlid for the plid.
+        $item['plid'] = $links[$key]['mlid'];
+      }
+    }
+    if($item['plid']) {
+      $previous_mlid = menu_link_save($item);
+    }
+  }
+
+  //not needed in .install
+  //menu_cache_clear_all();
+}
+
+/**
+ * Implements hook_uninstall.
+ */
+function management_links_uninstall() {
+  $items = _management_links_items();
+  foreach($items AS $item) {
+    menu_link_delete(NULL, $item['link_path']);
+  }
+}
