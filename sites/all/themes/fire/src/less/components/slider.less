@@ -137,3 +137,45 @@
 .field-name-field-slide-image > .field-items .field-item {
   overflow: hidden;
 }
+
+
+@media all and (max-width: 769px) {
+  .paragraphs-item-slide .content {
+  position: relative;
+
+  .slide-body {
+    position: absolute;
+    top: 155px;
+    color: #fff;
+    width: 40.5812%;
+    max-width: 100%;
+    text-align: center;
+    left: 50%;
+    margin-left: -20.2906%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    a {
+      display: block;
+      background: @yellow;
+      color: #000 !important;
+      padding: 5px 10px;
+      text-transform: uppercase;
+      border-radius: 16px;
+      font-family: "UbuntuBold";
+      font-size: 12px;
+      text-decoration: none !important;
+      &:hover {
+        background: @red;
+        color: #fff !important;
+      }
+    }
+  }
+
+  .field-name-field-slide-text a {
+    font-size: 12px;
+  }
+}
+}
