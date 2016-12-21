@@ -139,7 +139,7 @@ global $user;
       </div>
     </div>
     <?php if ($page['right_sidebar']) : ?>
-      <aside id="right-sidebar">
+      <aside id="right-sidebar" class="visible-lg-block">
         <?php print render($page['right_sidebar']); ?>
       </aside>
     <?php endif; ?>
