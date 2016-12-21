@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Implement hook_schema_alter
+ * @param type $schema
+ */
+function role_notify_schema_alter(&$schema) {
+  $schema['node_type']['fields']['notify'] = array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Notify role',
+  );
+  $schema['node_type']['fields']['notify_text'] = array(
+    'type' => 'text',
+    'not null' => FALSE,
+    'default' => NULL,
+    'description' => 'Notify text',
+  );
+}
+
+/**
+ * Implement hook_install
+ */
+function role_notify_install() {
+  $node_type_schema = drupal_get_schema('node_type');
+  db_add_field('node_type', 'notify', $node_type_schema['fields']['notify']);
+  db_add_field('node_type', 'notify_text', $node_type_schema['fields']['notify_text']);
+}
+
+/**
+ * Implement hook_uninstall
+ */
+function role_notify_uninstall() {
+  $node_type_schema = drupal_get_schema('node_type');
+  db_drop_field('node_type', 'notify');
+  db_drop_field('node_type', 'notify_text');
+}
