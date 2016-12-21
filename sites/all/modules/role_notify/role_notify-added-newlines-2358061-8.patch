@@ -1,0 +1,25 @@
+From da30b70b24de8f10eb0a289274d2e1a93cb1e2ed Mon Sep 17 00:00:00 2001
+From: Kristian Kaa <kaakristian@gmail.com>
+Date: Mon, 2 Feb 2015 15:32:49 +0100
+Subject: [PATCH] Added newlines to mail
+
+---
+ .../modules/contrib/role_notify/role_notify.module |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/role_notify.module b/role_notify.module
+index 178bacd..881bb50 100644
+--- a/role_notify.module
++++ b/role_notify.module
+@@ -208,7 +208,7 @@ function role_notify_node_insert($node) {
+           $send = FALSE;
+           $message = drupal_mail($module, $key, $email, $language, $params, $from, $send);
+           $message['subject'] = 'A new content was created';
+-          $message['body'] = array($output);
++          $message['body'] = array(nl2br($output));
+           $system = drupal_mail_system($module, $key);
+           $message = $system->format($message);
+           $message['result'] = $system->mail($message);
+-- 
+1.7.1
+
