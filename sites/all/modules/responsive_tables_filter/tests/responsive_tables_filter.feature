@@ -13,12 +13,8 @@ Scenario: A Drupal Views table is responsive with aggregation on and off
   And I fill in "Tablesaw Test" for "human_name"
   And I fill in "Tablesaw Test" for "page[title]"
   And I fill in "tablesaw-test" for "page[path]"
-  And I check the box "edit-block-create"
   And I select "table" from "page[style][style_plugin]"
-  And I select "table" from "block[style][style_plugin]"
-  And I press the "Continue & edit" button
-  And I wait for css element "#edit-actions-save" to appear
-  And I press the "Save" button
+  And I press the "Save & exit" button
   And I visit "/tablesaw-test"
   Then I should see the css element "table" with the attribute "class" with the value containing "tablesaw tablesaw-stack"
   And I should see the "b.tablesaw-cell-label" css selector with css property "display" containing "none"

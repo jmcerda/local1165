@@ -6,19 +6,25 @@
  */
 
 /**
- * System variable to toggle responsives tables on Drupal Views.
+ * System variable to toggle responsive tables on Drupal Views.
  */
 define('RESPONSIVE_TABLES_FILTER_VIEWS', 'responsive_tables_filter_views');
 
 /**
- * System variable to toggle responsives tables on admin theme.
+ * System variable to toggle responsive tables on admin theme.
  */
 define('RESPONSIVE_TABLES_FILTER_ADMIN', 'responsive_tables_filter_admin');
 
 /**
- * System variable to toggle responsives tables on file tables.
+ * System variable to toggle responsive tables on file tables.
  */
 define('RESPONSIVE_TABLES_FILTER_FILES', 'responsive_tables_filter_files');
+
+/**
+ * System variable to toggle asset loading on every page.
+ */
+define('RESPONSIVE_TABLES_FILTER_EVERY_PAGE', 'responsive_tables_filter_every_page');
+
 
 /**
  * Path to module configuration.
@@ -53,6 +59,13 @@ function responsive_tables_filter_admin_form($form, &$form_state) {
     '#markup' => '<p>' . t('Enable responsive tables in WYSIWYG fields by going to !text_formats and checking "Make tables responsive" for the desired text format(s).', array('!text_formats' => l(t('Text Formats'), '/admin/config/content/formats'))) . '</p><hr />',
   );
 
+  $form[RESPONSIVE_TABLES_FILTER_EVERY_PAGE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Load CSS and Javascript on every page'),
+    '#description' => t('This is useful if you use Tablesaw in content other than nodes or Views tables (e.g., blocks or Panel displays). However this unconditionally increases the asset weight of page loads, which may be a performance drawback for sites that do not aggregate CSS/JS.'),
+    '#default_value' => variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE),
+  );
+
   $form[RESPONSIVE_TABLES_FILTER_FILES] = array(
     '#type' => 'checkbox',
     '#title' => t('Apply to file table display'),
@@ -63,13 +76,13 @@ function responsive_tables_filter_admin_form($form, &$form_state) {
   $form[RESPONSIVE_TABLES_FILTER_VIEWS] = array(
     '#type' => 'checkbox',
     '#title' => t('Apply to Views'),
-    '#description' => t('When checked, CSS classes will be added to Views to make them mobile-responsive.'),
+    '#description' => t('When checked, Views table displays will be responsive.'),
     '#default_value' => variable_get(RESPONSIVE_TABLES_FILTER_VIEWS, TRUE),
   );
 
   $form[RESPONSIVE_TABLES_FILTER_ADMIN] = array(
     '#type' => 'checkbox',
-    '#title' => t('Apply to Views in administration theme.'),
+    '#title' => t('Apply to Views in administration theme'),
     '#description' => t('When checked, responsive components will load for the administration theme.'),
     '#default_value' => variable_get(RESPONSIVE_TABLES_FILTER_ADMIN, FALSE),
     '#states' => array(
@@ -87,12 +100,12 @@ function responsive_tables_filter_admin_form($form, &$form_state) {
  * Implements hook_init().
  */
 function responsive_tables_filter_init() {
-  // If this page is using the default theme, AND
-  // If CSS/JS aggregation is on, add tablesaw on every page for aggregration.
-  // If aggregation is off, responsive_tables_filter_preprocess_page()
-  // conditionally adds it on a per-page basis.
-  if (_responsive_tables_filter_is_theme_default() && variable_get('preprocess_css', 0) == 1 && variable_get('preprocess_js', 0) == 1) {
-    _responsive_tables_filter_add_js_css(TRUE);
+  // If this page is using the default theme, AND the "every page" configuration
+  // setting was checked, then add tablesaw on every page. Otherwise,
+  // responsive_tables_filter_preprocess_page() conditionally adds it on a
+  // per-page basis.
+  if (_responsive_tables_filter_is_theme_default() && variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE)) {
+    _responsive_tables_filter_add_js_css();
   }
 }
 
@@ -118,19 +131,19 @@ function _tablesaw_filter($text, $filter, $format, $langcode, $cache, $cache_id)
   // not defined.
   static $new_libxml;
   if (!isset($new_libxml)) {
-    $new_libxml = version_compare(PHP_VERSION, '5.4', '>=') && defined('LIBXML_HTML_NOIMPLIED') && defined('LIBXML_HTML_NODEFDTD');
+    $new_libxml = defined(LIBXML_VERSION) && LIBXML_VERSION >= 20708;
   }
   if ($text != '') {
     $tables = array();
     libxml_use_internal_errors(TRUE);
     // LibXML requires that the html is wrapped in a root node.
-    $text = '<root>' . $text . '</root>';
+    $rooted_text = '<root>' . $text . '</root>';
     $dom = new DOMDocument();
     if ($new_libxml) {
-      $dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+      $dom->loadHTML(mb_convert_encoding($rooted_text, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
     }
     else {
-      $dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'));
+      $dom->loadHTML(mb_convert_encoding($rooted_text, 'HTML-ENTITIES', 'UTF-8'));
     }
     // Retrieve user-defined tables defined by xpath, or default to table tag.
     $query = variable_get('responsive_tables_filter_table_xpath', FALSE);
@@ -159,7 +172,7 @@ function _tablesaw_filter($text, $filter, $format, $langcode, $cache, $cache_id)
         $html .= $dom->saveHTML($child);
       }
       // For lower older libxml, use preg_replace to clean up DOCTYPE.
-      if (!$new_libxml) {
+      if (!$new_libxml && strpos($html, '<html><body>') != FALSE) {
         $html_start = strpos($html, '<html><body>') + 12;
         $html_length = strpos($html, '</body></html>') - $html_start;
         $html = substr($html, $html_start, $html_length);
@@ -173,12 +186,12 @@ function _tablesaw_filter($text, $filter, $format, $langcode, $cache, $cache_id)
 /**
  * Implements hook_preprocess_page().
  *
- * Adds tablesaw JS when tables present and CSS/JS aggregation is off.
+ * Adds tablesaw JS when tables present and "every_page" is off.
  */
 function responsive_tables_filter_preprocess_page(&$variables) {
-  // Only execute this preprocess logic if caching is off and the
+  // Only execute this preprocess logic if every page loading is off and the
   // page request is for the default theme.
-  if (_responsive_tables_filter_is_theme_default() && isset($variables['node']) && (variable_get('preprocess_css', 0) == 0 || variable_get('preprocess_js', 0) == 0)) {
+  if (_responsive_tables_filter_is_theme_default() && isset($variables['node']) && (!variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE))) {
     $formats_with_tablesaw = array();
     // Get text formats that have "tablesaw filter" enabled.
     $result = db_query('SELECT n.format FROM {filter} n WHERE n.module = :module AND n.status = 1', array(':module' => 'responsive_tables_filter'));
@@ -269,8 +282,11 @@ function responsive_tables_filter_theme() {
  * @ingroup themeable
  */
 function theme_file_formatter_responsive_table($variables) {
-  // Add the JS and CSS.
-  _responsive_tables_filter_add_js_css(TRUE);
+  // If we aren't loading assets on every page, do so here.
+  if (!variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE)) {
+    _responsive_tables_filter_add_js_css();
+  }
+
   $header = array(t('Attachment'), t('Size'));
   $rows = array();
   foreach ($variables['items'] as $delta => $item) {
@@ -301,14 +317,14 @@ function theme_file_formatter_responsive_table($variables) {
  */
 function responsive_tables_filter_preprocess_views_view_table(&$variables) {
   // Only execute if this View is using the default theme.
-  if ((_responsive_tables_filter_is_theme_default() || variable_get(RESPONSIVE_TABLES_FILTER_ADMIN, FALSE)) && variable_get(RESPONSIVE_TABLES_FILTER_VIEWS, FALSE)) {
+  if ((_responsive_tables_filter_is_theme_default() || variable_get(RESPONSIVE_TABLES_FILTER_ADMIN, TRUE)) && variable_get(RESPONSIVE_TABLES_FILTER_VIEWS, TRUE)) {
     // Add tablesaw classes & attribute.
     $variables['classes_array'][] = 'tablesaw';
     $variables['classes_array'][] = 'tablesaw-stack';
     $variables['attributes_array']['data-tablesaw-mode'] = 'stack';
-    // Add the required Tablesaw library if aggregation is disabled.
-    if (variable_get('preprocess_css', 0) == 0 || variable_get('preprocess_js', 0) == 0) {
-      _responsive_tables_filter_add_js_css(TRUE);
+    // If we aren't loading assets on every page, do so here.
+    if (!variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE)) {
+      _responsive_tables_filter_add_js_css();
     }
   }
 }
@@ -327,38 +343,19 @@ function _responsive_tables_filter_is_theme_default() {
 
 /**
  * Add Tablesaw JS and CSS.
- *
- * @param bool $every_page
- *   Whether or not the JS and CSS should be added to every page.
  */
-function _responsive_tables_filter_add_js_css($every_page) {
-  $tablesaw_path = libraries_get_path('tablesaw');
-  if (file_exists($tablesaw_path . '/dist/stackonly/tablesaw.stackonly.js') and file_exists($tablesaw_path . '/dist/stackonly/tablesaw.stackonly.css')) {
-    drupal_add_js($tablesaw_path . '/dist/stackonly/tablesaw.stackonly.js', array(
-      'every_page' => $every_page,
-      'scope' => 'footer',
-      'weight' => 30,
-    ));
-    drupal_add_css($tablesaw_path . '/dist/stackonly/tablesaw.stackonly.css', array('every_page' => $every_page));
-    if (file_exists($tablesaw_path . '/dist/tablesaw-init.js')) {
-      // Tablesaw 2.x includes tablesaw-init.js.
-      drupal_add_js($tablesaw_path . '/dist/tablesaw-init.js', array(
-        'every_page' => $every_page,
-        'scope' => 'footer',
-        'weight' => 31,
-      ));
-    }
-  }
-  else {
-    global $user;
-    $administrator = variable_get('user_admin_role', 0);
-    if (!empty($user->roles[$administrator]) or $user->uid == '1') {
-      $module_path = drupal_get_path('module', 'responsive_tables_filter');
-      drupal_set_message(
-        t('The tablesaw filter is enabled, but its library could not be found. See !readme', array(
-          '!readme' => l(t('README.txt'), $module_path . '/README.txt'),
-        )),
-        'warning');
-    }
-  }
+function _responsive_tables_filter_add_js_css() {
+  $every_page = variable_get(RESPONSIVE_TABLES_FILTER_EVERY_PAGE, FALSE);
+  $module_path = drupal_get_path('module', 'responsive_tables_filter');
+  drupal_add_css($module_path . '/tablesaw/css/tablesaw.stackonly.css', array('every_page' => $every_page));
+  drupal_add_js($module_path . '/tablesaw/js/tablesaw.stackonly.js', array(
+    'every_page' => $every_page,
+    'scope' => 'footer',
+    'weight' => 30,
+  ));
+  drupal_add_js($module_path . '/tablesaw/js/tablesaw-init.js', array(
+    'every_page' => $every_page,
+    'scope' => 'footer',
+    'weight' => 31,
+  ));
 }

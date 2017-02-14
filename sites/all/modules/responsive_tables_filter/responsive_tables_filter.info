@@ -4,12 +4,14 @@ core = 7.x
 package = "Input filters"
 
 dependencies[] = filter
-dependencies[] = libraries
 dependencies[] = jquery_update
+files[] = tests/ResponsiveTablesFilter.test
 
-; Information added by Drupal.org packaging script on 2016-09-13
-version = "7.x-1.7"
+test_dependencies[] = views
+
+; Information added by Drupal.org packaging script on 2016-12-27
+version = "7.x-1.8"
 core = "7.x"
 project = "responsive_tables_filter"
-datestamp = "1473775107"
+datestamp = "1482880985"
 

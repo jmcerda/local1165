@@ -8,7 +8,6 @@ Enable the "Make tables responsive" text format filter to display field tables r
 REQUIREMENTS / DEPENDENCIES
 ---------------------------
 Filter module (core)
-[Libraries API](https://www.drupal.org/project/libraries)
 jQuery version 1.7 or higher. Consider using [jQuery Update module](https://www.drupal.org/project/jquery_update)
 [Tablesaw v 1.x or 2.x](https://www.filamentgroup.com/lab/tablesaw.html)
 
@@ -16,10 +15,6 @@ INSTALLATION
 ------------
 1. Extract this module into your modules directory (ex: sites/all/modules/contrib)
 and enable it.
-
-2. Clone or download the Tablesaw JS library at https://github.com/filamentgroup/tablesaw
-and save it in sites/all/libraries/tablesaw (if you downloaded, you will need
-to change the folder name from "tablesaw-master" to "tablesaw").
 
 USAGE
 -----
