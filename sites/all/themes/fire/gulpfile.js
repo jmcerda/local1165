@@ -6,7 +6,7 @@ var gulp = require('gulp'),
             'gulp-live-server': 'serve'
         }
     });
-
+//jcerda
 // Start Watching: Run "gulp"
 gulp.task('default', ['watch']);
 
