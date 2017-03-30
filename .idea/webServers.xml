@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="62f05c25-36fc-45dc-9d15-bfcdebdc1d2f" name="Local1165 - Dev" url="http://dev-local1165.pantheonsite.io">
+        <fileTransfer host="appserver.dev.6b899204-c720-4352-9de5-bbd3b918fb8e.drush.in" port="2222" rootFolder="/srv/bindings/64db0ac4e1ae4661bdf92c4e3811b5ac/code" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="2222" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
