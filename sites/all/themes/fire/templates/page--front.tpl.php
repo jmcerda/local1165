@@ -76,7 +76,6 @@ global $user;
 ?>
 
 <header id="page-header">
-THIS IS A TEST
   <?php if ($logo): ?>
     <div class="logo-wrapper">
       <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo">
