@@ -1,0 +1,325 @@
+From e816e0f861e4a684d32d2bd02e6b23e617f686c8 Mon Sep 17 00:00:00 2001
+From: Kristian Kaa <kaakristian@gmail.com>
+Date: Mon, 2 Feb 2015 15:24:21 +0100
+Subject: [PATCH] Patched all
+
+---
+ .../contrib/role_notify/role_notify.install        |    8 +
+ .../modules/contrib/role_notify/role_notify.module |  197 ++++++++++++--------
+ 2 files changed, 128 insertions(+), 77 deletions(-)
+
+diff --git a/role_notify.install b/role_notify.install
+index 9c4106c..2fe1761 100644
+--- a/role_notify.install
++++ b/role_notify.install
+@@ -17,6 +17,12 @@ function role_notify_schema_alter(&$schema) {
+     'default' => NULL,
+     'description' => 'Notify text',
+   );
++  $schema['node_type']['fields']['notify_roles'] = array(
++    'type' => 'text',
++    'not null' => FALSE,
++    'default' => NULL,
++    'description' => 'Default roles to notify for new content of this type',
++  );
+ }
+ 
+ /**
+@@ -26,6 +32,7 @@ function role_notify_install() {
+   $node_type_schema = drupal_get_schema('node_type');
+   db_add_field('node_type', 'notify', $node_type_schema['fields']['notify']);
+   db_add_field('node_type', 'notify_text', $node_type_schema['fields']['notify_text']);
++  db_add_field('node_type', 'notify_roles', $node_type_schema['fields']['notify_roles']);
+ }
+ 
+ /**
+@@ -35,4 +42,5 @@ function role_notify_uninstall() {
+   $node_type_schema = drupal_get_schema('node_type');
+   db_drop_field('node_type', 'notify');
+   db_drop_field('node_type', 'notify_text');
++  db_drop_field('node_type', 'notify_roles');
+ }
+diff --git a/role_notify.module b/role_notify.module
+index 47e1715..178bacd 100644
+--- a/role_notify.module
++++ b/role_notify.module
+@@ -7,9 +7,9 @@
+ function role_notify_permission() {
+   return array(
+     'notify roles' => array(
+-        'title' => t('Notify roles'),
+-        'description' => t('Allows user to notify users of roles on node add')),
+-    );
++      'title' => t('Notify roles'),
++      'description' => t('Allows user to notify users of roles on node add')),
++  );
+ }
+ 
+ /**
+@@ -24,7 +24,7 @@ function role_notify_form_node_type_form_alter(&$form, &$form_state) {
+       $form['workflow']['notify'] = array(
+         '#type' => 'checkbox',
+         '#title' => t('Enable notify by role for this content type.'),
+-        '#default_value' => $defaults == 0 ? 0 : 1,
++        '#default_value' => $defaults ? 1 : 0,
+       );
+       $form['workflow']['settings'] = array(
+         '#type' => 'container',
+@@ -34,11 +34,20 @@ function role_notify_form_node_type_form_alter(&$form, &$form_state) {
+           ),
+         )
+       );
++      $roles = _get_all_roles();
++      if ($roles) {
++        $form['workflow']['settings']['notify']['default_roles'] = array(
++          '#type' => 'checkboxes',
++          '#title' => t('Select roles to notify per default for this content type'),
++          '#options' => $roles,
++          '#default_value' => $defaults ? $defaults['roles'] : [],
++        );
++      }
+       $form['workflow']['settings']['notify']['message'] = array(
+         '#type' => 'textarea',
+         '#title' => t('Message'),
+         '#weight' => 20,
+-        '#default_value' => $defaults == 0 ? '' : $defaults['text'],
++        '#default_value' => $defaults ? $defaults['text'] : '',
+         '#size' => 4,
+         '#resizable' => FALSE,
+         '#weight' => 100,
+@@ -73,28 +82,35 @@ function role_notify_node_settings_validate(&$form, &$form_state) {
+  * @param type $form_state
+  */
+ function role_notify_node_settings_submit(&$form, &$form_state) {
+-  if ($form_state['values']['notify'] !== 0){
++  if ($form_state['values']['notify'] !== 0) {
++    // Active notifications for the node type.
++    role_notify_set($form_state['values']['type'], TRUE);
++    // Update the message.
+     db_update('node_type')
+-    ->fields(array('notify' => $form_state['values']['notify']))
+-    ->condition('type', $form_state['values']['type'], '=')
+-    ->execute();
+-
+-    db_update('node_type')
+-    ->fields(array('notify_text' => $form_state['values']['message']))
+-    ->condition('type', $form_state['values']['type'], '=')
+-    ->execute();
++      ->fields(array('notify_text' => $form_state['values']['message']))
++      ->condition('type', $form_state['values']['type'], '=')
++      ->execute();
+   }
+-  if ($form_state['values']['notify'] == 0){
+-    db_update('node_type')
+-    ->fields(array('notify' => 0))
+-    ->condition('type', $form_state['values']['type'], '=')
+-    ->execute();
+-
++  if ($form_state['values']['notify'] == 0) {
++    // Deactive notifications for the node type.
++    role_notify_set($form_state['values']['type'], FALSE);
++    // Clear the message.
+     db_update('node_type')
+-    ->fields(array('notify_text' => NULL))
++      ->fields(array('notify_text' => NULL))
++      ->condition('type', $form_state['values']['type'], '=')
++      ->execute();
++  }
++  // Update the default roles.
++  $roles = array();
++  foreach ($form_state['values']['default_roles'] as $rid => $selected) {
++    if ($selected) {
++      $roles[$rid] = $rid;
++    }
++  }
++  db_update('node_type')
++    ->fields(array('notify_roles' => serialize($roles)))
+     ->condition('type', $form_state['values']['type'], '=')
+     ->execute();
+-  }
+ }
+ 
+ /**
+@@ -110,21 +126,22 @@ function role_notify_form_node_form_alter(&$form, $form_state) {
+       if (empty($roles)) {
+         $roles = 0;
+       }
+-      if ($status != 0 && $status['notify'] == 1) {
++      if ($status && $status['notify'] == 1) {
+         $form['notify'] = array(
+-            '#type' => 'fieldset',
+-            '#access' => TRUE,
+-            '#title' => 'Notify',
+-            '#collapsible' => TRUE,
+-            '#collapsed' => TRUE,
+-            '#group' => 'additional_settings',
+-            '#weight' => 100,
+-       );
++          '#type' => 'fieldset',
++          '#access' => TRUE,
++          '#title' => 'Notify',
++          '#collapsible' => TRUE,
++          '#collapsed' => TRUE,
++          '#group' => 'additional_settings',
++          '#weight' => 100,
++        );
+         if ($roles !== 0) {
+           $form['notify']['notify_roles'] = array(
+             '#type' => 'checkboxes',
+             '#title' => t('Select roles to notify'),
+             '#options' => $roles,
++            '#default_value' => $status ? $status['roles'] : [],
+             '#access' => user_access('administer nodes'),
+           );
+         }
+@@ -144,48 +161,59 @@ function role_notify_form_node_form_alter(&$form, $form_state) {
+  * @param type $node
+  */
+ function role_notify_node_insert($node) {
+-  $selected_roles_array = $node->notify_roles;
+   $notify_status = _role_notify_status($node->type);
+-  $output = token_replace($notify_status['text'], array('node' => $node), array('sanitize' => FALSE));
+-  
+-  foreach ($selected_roles_array as $selected_roles_array_item => $value) {
+-    if ($value) {
+-      $selected_roles[] = $selected_roles_array_item;
+-    }
+-  }
+-  
+-  foreach ($selected_roles as $rid) {
+-    $query = db_select('users', 'u');
+-    $query->fields('u', array('mail'));
+-    $query->leftJoin('users_roles', 'ur', 'ur.uid = u.uid');
+-    $query->condition('ur.rid', $rid);
+-    $results[] = $query->execute()->fetchAll();
+-  }
+-  
+-  foreach ($results as $result => $v) {
+-    foreach ($v as $key => $value) {
+-      $values[] = $value->mail;
++  $selected_roles = [];
++  if ($notify_status && $notify_status['notify']) {
++    // If node is created from backend, $node->notify_roles is set, if notifications is enabled for the content type.
++    if (isset($node->notify_roles)) {
++      $selected_roles_array = $node->notify_roles;
++      foreach ($selected_roles_array as $selected_roles_array_item => $value) {
++        if ($value) {
++          $selected_roles[] = $selected_roles_array_item;
++        }
++      }
+     }
+-  }
+-  if(isset($values)) {
+-    foreach ($values as $send) {
+-      $emails[] = $send;
++    // Use the defaults for the node type.
++    else {
++      foreach ($notify_status['roles'] as $rid) {
++        $selected_roles[] = $rid;
++      }
+     }
+-    $emails = array_unique($emails);
+-
+-    foreach ($emails as $email) {
+-      $module = 'role_notify';
+-      $key = 'key';
+-      $language = language_default();
+-      $params = array();
+-      $from = variable_get('site_name');
+-      $send = FALSE;
+-      $message = drupal_mail($module, $key, $email, $language, $params, $from, $send);
+-      $message['subject'] = 'A new content was created';
+-      $message['body'] = array($output);
+-      $system = drupal_mail_system($module, $key);
+-      $message = $system->format($message);
+-      $message['result'] = $system->mail($message);
++    // Only try to notify if any roles was selected.
++    if (!empty($selected_roles)) {
++      $output = token_replace($notify_status['text'], array('node' => $node), array('sanitize' => FALSE));
++      foreach ($selected_roles as $rid) {
++        $query = db_select('users', 'u');
++        $query->fields('u', array('mail'));
++        $query->leftJoin('users_roles', 'ur', 'ur.uid = u.uid');
++        $query->condition('ur.rid', $rid);
++        $results[] = $query->execute()->fetchAll();
++      }
++      foreach ($results as $result => $v) {
++        foreach ($v as $key => $value) {
++          $values[] = $value->mail;
++        }
++      }
++      if(isset($values)) {
++        foreach ($values as $send) {
++          $emails[] = $send;
++        }
++        $emails = array_unique($emails);
++        foreach ($emails as $email) {
++          $module = 'role_notify';
++          $key = 'key';
++          $language = language_default();
++          $params = array();
++          $from = variable_get('site_name');
++          $send = FALSE;
++          $message = drupal_mail($module, $key, $email, $language, $params, $from, $send);
++          $message['subject'] = 'A new content was created';
++          $message['body'] = array($output);
++          $system = drupal_mail_system($module, $key);
++          $message = $system->format($message);
++          $message['result'] = $system->mail($message);
++        }
++      }
+     }
+   }
+ }
+@@ -210,7 +238,7 @@ function _get_all_roles() {
+   else {
+     $ret = $roles;
+   }
+-  
++
+   return $ret;
+ }
+ 
+@@ -220,17 +248,32 @@ function _get_all_roles() {
+  * @return type
+  */
+ function _role_notify_status($node_type) {
++  // Try to load the notify settings for the node type.
+   $notify = db_select('node_type', 'nt')
+     ->fields('nt')
+     ->condition('type', $node_type)
+     ->execute()
+     ->fetchObject();
+   if (!empty($notify->notify_text)) {
+-    $ret = array('notify' => $notify->notify, 'text' => $notify->notify_text);
+-  }
+-  else {
+-    $ret = $notify->notify;
++    return array(
++      'notify' => $notify->notify,
++      'text' => $notify->notify_text,
++      'roles' => unserialize($notify->notify_roles),
++    );
+   }
+-
+-  return $ret;
++  return FALSE;
+ }
++
++/**
++ * Set notifications on or off for a node type.
++ *
++ * @param string $node_type.
++ * @param bool $enable.
++ */
++function role_notify_set($node_type, $enable) {
++  $enable = $enable ? 1 : 0;
++  db_update('node_type')
++    ->fields(array('notify' => $enable))
++    ->condition('type', $node_type, '=')
++    ->execute();
++}
+\ No newline at end of file
+-- 
+1.7.1
+

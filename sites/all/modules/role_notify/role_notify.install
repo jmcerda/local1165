@@ -17,6 +17,12 @@ function role_notify_schema_alter(&$schema) {
     'default' => NULL,
     'description' => 'Notify text',
   );
+  $schema['node_type']['fields']['notify_roles'] = array(
+    'type' => 'text',
+    'not null' => FALSE,
+    'default' => NULL,
+    'description' => 'Default roles to notify for new content of this type',
+  );
 }
 
 /**
@@ -26,6 +32,7 @@ function role_notify_install() {
   $node_type_schema = drupal_get_schema('node_type');
   db_add_field('node_type', 'notify', $node_type_schema['fields']['notify']);
   db_add_field('node_type', 'notify_text', $node_type_schema['fields']['notify_text']);
+  db_add_field('node_type', 'notify_roles', $node_type_schema['fields']['notify_roles']);
 }
 
 /**
@@ -35,4 +42,5 @@ function role_notify_uninstall() {
   $node_type_schema = drupal_get_schema('node_type');
   db_drop_field('node_type', 'notify');
   db_drop_field('node_type', 'notify_text');
+  db_drop_field('node_type', 'notify_roles');
 }
