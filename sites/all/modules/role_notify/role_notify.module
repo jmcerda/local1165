@@ -19,7 +19,7 @@ function role_notify_permission() {
  */
 function role_notify_form_node_type_form_alter(&$form, &$form_state) {
   if (isset($form['type'])) {
-    if (user_access('administer nodes')) {
+    if (user_access('access content')) {
       $defaults = _role_notify_status($form['#node_type']->type);
       $form['workflow']['notify'] = array(
         '#type' => 'checkbox',
